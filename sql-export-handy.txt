@@ -1,0 +1,3 @@
+docker exec -it e7b002059fb3 /bin/bash
+mysqldump  -uroot  -proot --no-data grafana > grafana-db.sql
+docker cp e7b002059fb3:/grafana-db.sql /Users/jagathvenkat/Desktop/
