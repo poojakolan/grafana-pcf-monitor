@@ -94,12 +94,24 @@ for foundry in foundry_list:
     for org_obj in org_json['resources']:
         org_id = 0 
         quota_cmd = get_org_quota+org_obj['entity']['quota_definition_guid']
-        print(quota_cmd)
-        process = subprocess.Popen(shlex.split(quota_cmd), stdout=subprocess.PIPE)
+        token_proc = subprocess.Popen(shlex.split('cf oauth-token'), stdout=subprocess.PIPE)
+        token = token_proc.communicate()[0]
+        token = token.replace("\n", "")
+        params = urllib.urlencode({})
+        headers = {"Authorization": token}
+        conn = httplib.HTTPSConnection(flist[5])
+        conn.request("GET", "/proxy/api/v2/organizations/"+org_obj['metadata']['guid']+"/memory_usage", params, headers)
+        response = conn.getresponse()
+        print(response.status, response.reason)
+        data_asigned_quota = response.read()
+        conn.close()
+        data_asigned_quota_json = json.loads(data_asigned_quota)
+        print("quota asigned "+ str(data_asigned_quota))
+        '''process = subprocess.Popen(shlex.split(quota_cmd), stdout=subprocess.PIPE)
         raw_org_quota = process.communicate()[0]
         org_quota_json = json.loads(raw_org_quota)
-        print(org_quota_json)
-        foundry_avail_mem = foundry_avail_mem + org_quota_json['entity']['memory_limit']
+        print(org_quota_json)'''
+        foundry_avail_mem = foundry_avail_mem + data_asigned_quota_json['memory_usage_in_mb']
         mycursor.execute(get_org_id_sql, (org_obj['entity']['name'], foundry_id,))
         myresult = mycursor.fetchall()
         if(len(myresult) == 1):
@@ -113,7 +125,7 @@ for foundry in foundry_list:
         process = subprocess.Popen(shlex.split(cf_list_spaces_command), stdout=subprocess.PIPE)
         raw_spaces_json = process.communicate()[0]
         spaces_json = json.loads(raw_spaces_json)
-
+        
         for space_obj in spaces_json['resources']:
             space_id = 0 
             mycursor.execute(get_space_id_sql, (space_obj['entity']['name'],org_id,))
@@ -149,10 +161,6 @@ for foundry in foundry_list:
             row = row + 9
             resources = apps_json['resources']
             sorted_resources = sorted(resources, key=lambda k: k['entity'].get('memory', 0), reverse=True)
-
-            token_proc = subprocess.Popen(shlex.split('cf oauth-token'), stdout=subprocess.PIPE)
-            token = token_proc.communicate()[0]
-            token = token.replace("\n", "")
             for app in sorted_resources:
                 params = urllib.urlencode({})
                 headers = {"Authorization": token}
