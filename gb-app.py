@@ -35,7 +35,7 @@ insert_app_sql = ("INSERT INTO pcf_apps "
                "(name, memory, instances, disk_space, state, cpu_used, memory_used, disk_used, space_id, memory_consumption_percent, last_updated) "
                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 update_app_sql = "UPDATE pcf_apps SET name = %s, memory = %s , instances = %s , disk_space = %s, state = %s, cpu_used = %s, memory_used = %s, disk_used = %s, space_id = %s where id = %s and space_id = %s"
-update_foundry_mempry_percent = "UPDATE foundries SET memory_consumption_percent = %s, last_updated = %s"
+update_foundry_mempry_percent = "UPDATE foundries SET memory_consumption_percent = %s, last_updated = %s where id = %s"
 app_memory_percent = "UPDATE pcf_apps SET memory_consumption_percent = %s, last_updated = %s"
 truncate_apps = "TRUNCATE TABLE grafana.pcf_apps"
 truncate_orgs = "TRUNCATE TABLE grafana.pcf_org"
@@ -54,6 +54,7 @@ db.commit()
 for foundry in foundry_list:
     foundry_avail_mem = 0
     foundry_app_mem_usage = 0
+    foundry_used_per = 0
     flist = foundry_list[foundry]
     api = flist[0]
     user = flist[1]
@@ -197,7 +198,7 @@ for foundry in foundry_list:
                     db.commit()
                 else:'''
                 app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/app['entity']['memory'])
-                foundry_app_mem_usage = foundry_app_mem_usage + bitmath.Byte(mem_total).to_GB().value
+                foundry_app_mem_usage = foundry_app_mem_usage + bitmath.Byte(mem_total).to_MB().value
                 mycursor.execute(insert_app_sql, (app['entity']['name'],app['entity']['memory'],app['entity']['instances'],app['entity']['disk_quota'],app['entity']['state'],cpu_total,mem_total,disk_total, space_id, app_mem_per,time.strftime('%Y-%m-%d %H:%M:%S')))
                 app_id = mycursor.lastrowid
                 db.commit()
@@ -217,7 +218,7 @@ for foundry in foundry_list:
     print(foundry_avail_mem)
     foundry_used_per = 100 * (foundry_app_mem_usage/foundry_avail_mem)  
     print(foundry_used_per)
-    mycursor.execute(update_foundry_mempry_percent, (foundry_used_per,time.strftime('%Y-%m-%d %H:%M:%S')))
+    mycursor.execute(update_foundry_mempry_percent, (foundry_used_per,time.strftime('%Y-%m-%d %H:%M:%S'),foundry_id))
     db.commit()
 workbook.close()
 
