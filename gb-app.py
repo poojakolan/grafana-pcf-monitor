@@ -197,7 +197,9 @@ for foundry in foundry_list:
                     mycursor.execute(update_app_sql, (app['entity']['name'],app['entity']['memory'],app['entity']['instances'],app['entity']['disk_quota'],app['entity']['state'],cpu_total,mem_total,disk_total, space_id, app_id, space_id))
                     db.commit()
                 else:'''
-                app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/app['entity']['memory'])
+                total_app_mem = app['entity']['memory'] * app['entity']['instances']
+                app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/total_app_mem)
+                print(str(total_app_mem) + " "  + str(bitmath.Byte(mem_total).to_MB().value) + " " + str(app_mem_per))
                 foundry_app_mem_usage = foundry_app_mem_usage + bitmath.Byte(mem_total).to_MB().value
                 mycursor.execute(insert_app_sql, (app['entity']['name'],app['entity']['memory'],app['entity']['instances'],app['entity']['disk_quota'],app['entity']['state'],cpu_total,mem_total,disk_total, space_id, app_mem_per,time.strftime('%Y-%m-%d %H:%M:%S')))
                 app_id = mycursor.lastrowid
