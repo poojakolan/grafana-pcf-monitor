@@ -34,9 +34,10 @@ insert_space_sql = ("INSERT INTO pcf_space "
 insert_app_sql = ("INSERT INTO pcf_apps "
                "(name, memory, instances, disk_space, state, cpu_used, memory_used, disk_used, space_id, memory_consumption_percent, last_updated) "
                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
-update_app_sql = "UPDATE pcf_apps SET name = %s, memory = %s , instances = %s , disk_space = %s, state = %s, cpu_used = %s, memory_used = %s, disk_used = %s, space_id = %s where id = %s and space_id = %s"
-update_foundry_mempry_percent = "UPDATE foundries SET memory_consumption_percent = %s, last_updated = %s where id = %s"
+update_app_sql = "UPDATE pcf_apps SET name = %s, memory = %s , instances = %s , disk_space = %s, state = %s, cpu_used = %s, memory_used = %s, disk_used = %s, space_id = %s where id = %s and space_id = %s and is_historic = %s"
+update_foundry_memory_percent = "UPDATE foundries SET memory_consumption_percent = %s, last_updated = %s where id = %s"
 app_memory_percent = "UPDATE pcf_apps SET memory_consumption_percent = %s, last_updated = %s"
+update_app_historic = "UPDATE pcf_apps SET is_historic = %s, last_updated = %s where id = %s"
 truncate_apps = "TRUNCATE TABLE grafana.pcf_apps"
 truncate_orgs = "TRUNCATE TABLE grafana.pcf_org"
 truncate_space = "TRUNCATE TABLE grafana.pcf_space"
@@ -49,7 +50,7 @@ db = mysql.connector.connect(
 )
 
 mycursor = db.cursor()
-mycursor.execute(truncate_apps)
+#mycursor.execute(truncate_apps)
 db.commit()
 for foundry in foundry_list:
     foundry_avail_mem = 0
@@ -187,16 +188,16 @@ for foundry in foundry_list:
                 worksheet.write(row, col + 2, app['entity']['instances'])
                 worksheet.write(row, col + 3, app['entity']['disk_quota'])
                 worksheet.write(row, col + 4, app['entity']['state'])
-                '''mycursor.execute(get_app_id_sql, (app['entity']['name'],space_id,))
+                mycursor.execute(get_app_id_sql, (app['entity']['name'],space_id,))
                 myresult = mycursor.fetchall()
                 app_id = 0
                 if(len(myresult) == 1):
                     print('app value found', myresult[0][0])
                     app_id = myresult[0][0]
                     db.commit()
-                    mycursor.execute(update_app_sql, (app['entity']['name'],app['entity']['memory'],app['entity']['instances'],app['entity']['disk_quota'],app['entity']['state'],cpu_total,mem_total,disk_total, space_id, app_id, space_id))
+                    mycursor.execute(update_app_historic, ("H",time.strftime('%Y-%m-%d %H:%M:%S'),app_id,))
                     db.commit()
-                else:'''
+                #else:
                 total_app_mem = app['entity']['memory'] * app['entity']['instances']
                 app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/total_app_mem)
                 print(str(total_app_mem) + " "  + str(bitmath.Byte(mem_total).to_MB().value) + " " + str(app_mem_per))
@@ -220,7 +221,7 @@ for foundry in foundry_list:
     print(foundry_avail_mem)
     foundry_used_per = 100 * (foundry_app_mem_usage/foundry_avail_mem)  
     print(foundry_used_per)
-    mycursor.execute(update_foundry_mempry_percent, (foundry_used_per,time.strftime('%Y-%m-%d %H:%M:%S'),foundry_id))
+    mycursor.execute(update_foundry_memory_percent, (foundry_used_per,time.strftime('%Y-%m-%d %H:%M:%S'),foundry_id))
     db.commit()
 workbook.close()
 
