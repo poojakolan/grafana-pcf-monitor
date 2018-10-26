@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "trending_data.py", line 207, in <module>
+    mycursor.execute(insert_app_sql, (app['entity']['name'],app['entity']['memory'],app['entity']['instances'],app['entity']['disk_quota'],app['entity']['state'],cpu_total,mem_total,disk_total, space_id, app_mem_per,time.strftime('%Y-%m-%d %H:%M:%S')))
+  File "/usr/lib/python2.7/site-packages/mysql/connector/cursor.py", line 491, in execute
+    self._handle_result(self._connection.cmd_query(stmt))
+  File "/usr/lib/python2.7/site-packages/mysql/connector/connection.py", line 635, in cmd_query
+    statement))
+  File "/usr/lib/python2.7/site-packages/mysql/connector/connection.py", line 553, in _handle_result
+    raise errors.get_exception(packet)
+mysql.connector.errors.DataError: 1264 (22003): Out of range value for column 'memory_used' at row 1
+Exception Exception: Exception('Exception caught in workbook destructor. Explicit close() may be required for workbook.',) in <bound method Workbook.__del__ of <xlsxwriter.workbook.Workbook object at 0x7fd582571c10>> ignored
