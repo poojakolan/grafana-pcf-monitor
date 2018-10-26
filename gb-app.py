@@ -37,7 +37,7 @@ insert_app_sql = ("INSERT INTO pcf_apps "
 update_app_sql = "UPDATE pcf_apps SET name = %s, memory = %s , instances = %s , disk_space = %s, state = %s, cpu_used = %s, memory_used = %s, disk_used = %s, space_id = %s where id = %s and space_id = %s and is_historic = %s"
 update_foundry_memory_percent = "UPDATE foundries SET memory_consumption_percent = %s, last_updated = %s where id = %s"
 app_memory_percent = "UPDATE pcf_apps SET memory_consumption_percent = %s, last_updated = %s"
-update_app_historic = "UPDATE pcf_apps SET is_historic = %s, last_updated = %s where id = %s"
+update_app_historic = "UPDATE pcf_apps SET is_historic = %s, last_updated = %s"
 truncate_apps = "TRUNCATE TABLE grafana.pcf_apps"
 truncate_orgs = "TRUNCATE TABLE grafana.pcf_org"
 truncate_space = "TRUNCATE TABLE grafana.pcf_space"
@@ -51,6 +51,8 @@ db = mysql.connector.connect(
 
 mycursor = db.cursor()
 #mycursor.execute(truncate_apps)
+#db.commit()
+mycursor.execute(update_app_historic, ("H",time.strftime('%Y-%m-%d %H:%M:%S'),))
 db.commit()
 for foundry in foundry_list:
     foundry_avail_mem = 0
@@ -191,13 +193,13 @@ for foundry in foundry_list:
                 mycursor.execute(get_app_id_sql, (app['entity']['name'],space_id,))
                 myresult = mycursor.fetchall()
                 app_id = 0
-                if(len(myresult) == 1):
+                '''if(len(myresult) == 1):
                     print('app value found', myresult[0][0])
                     app_id = myresult[0][0]
                     db.commit()
                     mycursor.execute(update_app_historic, ("H",time.strftime('%Y-%m-%d %H:%M:%S'),app_id,))
                     db.commit()
-                #else:
+                else:'''
                 total_app_mem = app['entity']['memory'] * app['entity']['instances']
                 app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/total_app_mem)
                 print(str(total_app_mem) + " "  + str(bitmath.Byte(mem_total).to_MB().value) + " " + str(app_mem_per))
