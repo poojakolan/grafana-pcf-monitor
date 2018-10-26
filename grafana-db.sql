@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `grafana`.`foundries` (
   `memory_consumption_percent` INT(11) NOT NULL,
   `last_updated` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) )
 ENGINE = InnoDB
 AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = latin1;
@@ -42,8 +42,8 @@ CREATE TABLE IF NOT EXISTS `grafana`.`pcf_org` (
   `memory_consumption_percent` INT(11) NOT NULL,
   `last_updated` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`id`, `org_name`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `foundry_id_idx` (`foundry_id` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
+  INDEX `foundry_id_idx` (`foundry_id` ASC) ,
   CONSTRAINT `foundry_id`
     FOREIGN KEY (`foundry_id`)
     REFERENCES `grafana`.`foundries` (`id`)
@@ -64,8 +64,8 @@ CREATE TABLE IF NOT EXISTS `grafana`.`pcf_space` (
   `memory_consumption_percent` INT(11) NOT NULL,
   `last_updated` DATETIME NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `org_fkey_idx` (`org_id` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
+  INDEX `org_fkey_idx` (`org_id` ASC) ,
   CONSTRAINT `org_fkey`
     FOREIGN KEY (`org_id`)
     REFERENCES `grafana`.`pcf_org` (`id`)
@@ -82,20 +82,20 @@ DEFAULT CHARACTER SET = latin1;
 CREATE TABLE IF NOT EXISTS `grafana`.`pcf_apps` (
   `id` BIGINT(225) NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(100) NULL DEFAULT NULL,
-  `memory` DECIMAL(10,0) NULL DEFAULT NULL,
+  `memory` DECIMAL(20,0) NULL DEFAULT NULL,
   `instances` TINYINT(10) NULL DEFAULT NULL,
   `disk_space` INT(11) NULL DEFAULT NULL,
   `state` VARCHAR(20) NULL DEFAULT NULL,
   `cpu_used` DECIMAL(20,15) NULL DEFAULT NULL,
-  `memory_used` DECIMAL(10,0) NULL DEFAULT NULL,
-  `disk_used` DECIMAL(10,0) NULL DEFAULT NULL,
+  `memory_used` DECIMAL(20,2) NULL DEFAULT NULL,
+  `disk_used` DECIMAL(20,0) NULL DEFAULT NULL,
   `space_id` INT(11) NULL DEFAULT NULL,
   `memory_consumption_percent` INT(11) NOT NULL,
   `last_updated` DATETIME NOT NULL,
   `is_historic` VARCHAR(1) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
-  INDEX `space_fkey_idx` (`space_id` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) ,
+  INDEX `space_fkey_idx` (`space_id` ASC) ,
   CONSTRAINT `space_fkey`
     FOREIGN KEY (`space_id`)
     REFERENCES `grafana`.`pcf_space` (`id`)
