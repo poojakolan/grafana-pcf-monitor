@@ -22,3 +22,7 @@ select foundry.foundry_name, apps.name,apps.memory,apps.memory_consumption_perce
 
 select foundry.foundry_name, orgs.org_name, spaces.space_name, apps.name,apps.instances,apps.memory,apps.memory_used,apps.memory_consumption_percent,apps.disk_space,apps.disk_used,apps.cpu_used from grafana.foundries as foundry, grafana.pcf_apps as apps, grafana.pcf_org as orgs, grafana.pcf_space as spaces where apps.space_id = spaces.id and spaces.org_id = orgs.id and orgs.foundry_id = foundry.id and apps.is_historic is null and apps.state = 'STARTED' and foundry.foundry_name in (${foundry_list}) and orgs.org_name in (${ORG_NAMES}) and apps.memory_consumption_percent > (${greater_percent}) and  apps.memory_consumption_percent < (${less_percent}) order by apps.memory_consumption_percent;
 
+trending-graph:
+select UNIX_TIMESTAMP(apps.last_updated) as time_sec , apps.memory_used as value, 'memory-used' as metric from grafana.foundries as foundry, grafana.pcf_apps as apps, grafana.pcf_org as orgs, grafana.pcf_space as spaces where apps.space_id = spaces.id and spaces.org_id = orgs.id and orgs.foundry_id = foundry.id and apps.name in (${app_name}) and $__timeFilter(apps.last_updated)
+ORDER BY apps.last_updated ASC;
+
