@@ -1,0 +1,6 @@
+
+Traceback (most recent call last):
+  File "trending_data.py", line 204, in <module>
+    app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/total_app_mem)
+ZeroDivisionError: float division by zero
+Exception Exception: Exception('Exception caught in workbook destructor. Explicit close() may be required for workbook.',) in <bound method Workbook.__del__ of <xlsxwriter.workbook.Workbook object at 0x7f60266a4c50>> ignored
