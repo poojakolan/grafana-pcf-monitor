@@ -28,3 +28,10 @@ ORDER BY apps.last_updated ASC;
 
 trending-war-qry:
 SELECT distinct name from grafana.pcf_apps;
+
+foundry_name-var-qry:
+select distinct foundry_name from grafana.foundries;
+
+trending_foundry_graph:
+select UNIX_TIMESTAMP(foundry.last_updated) as time_sec , foundry.foundry_memory as value, 'memory-used' as metric from grafana.foundries as foundry where foundry.foundry_name in (${foundry_name}) and $__timeFilter(foundry.last_updated)
+ORDER BY foundry.last_updated ASC;
