@@ -203,7 +203,9 @@ for foundry in foundry_list:
                     db.commit()
                 else:'''
                 total_app_mem = app['entity']['memory'] * app['entity']['instances']
-                app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/total_app_mem)
+                app_mem_per = 0
+                if(total_app_mem != 0):
+                    app_mem_per = 100 * (bitmath.Byte(mem_total).to_MB().value/total_app_mem)
                 print(str(total_app_mem) + " "  + str(bitmath.Byte(mem_total).to_MB().value) + " " + str(app_mem_per))
                 foundry_app_mem_usage = foundry_app_mem_usage + bitmath.Byte(mem_total).to_MB().value
                 mycursor.execute(insert_app_sql, (app['entity']['name'],app['entity']['memory'],app['entity']['instances'],app['entity']['disk_quota'],app['entity']['state'],cpu_total,mem_total,disk_total, space_id, app_mem_per,time.strftime('%Y-%m-%d %H:%M:%S')))
@@ -223,7 +225,9 @@ for foundry in foundry_list:
                 row += 1
     print(foundry_app_mem_usage)
     print(foundry_avail_mem)
-    foundry_used_per = 100 * (foundry_app_mem_usage/foundry_avail_mem)  
+    foundry_used_per = 0
+    if(foundry_avail_mem != 0):
+        foundry_used_per = 100 * (foundry_app_mem_usage/foundry_avail_mem)  
     print(foundry_used_per)
     mycursor.execute(update_foundry_memory_percent, (foundry_used_per, foundry_app_mem_usage, time.strftime('%Y-%m-%d %H:%M:%S'), foundry_id))
     db.commit()
