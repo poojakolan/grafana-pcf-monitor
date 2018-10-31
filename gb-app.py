@@ -16,7 +16,7 @@ timestamp_str = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d-
 workbook = xlsxwriter.Workbook('top_apps_'+timestamp_str+'.xlsx')
 bold = workbook.add_format({'bold': True})
 
-get_foundry_id_sql = "SELECT id FROM foundries WHERE foundry_name = %s"
+get_foundry_id_sql = "SELECT id FROM foundries WHERE foundry_name = %s and is_historic is null"
 get_org_id_sql = "SELECT id FROM pcf_org WHERE org_name = %s and foundry_id = %s"
 get_space_id_sql = "SELECT id FROM pcf_space WHERE space_name = %s and org_id = %s"
 get_app_id_sql = "SELECT id FROM pcf_apps WHERE name = %s and space_id = %s"
@@ -35,9 +35,10 @@ insert_app_sql = ("INSERT INTO pcf_apps "
                "(name, memory, instances, disk_space, state, cpu_used, memory_used, disk_used, space_id, memory_consumption_percent, last_updated) "
                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
 update_app_sql = "UPDATE pcf_apps SET name = %s, memory = %s , instances = %s , disk_space = %s, state = %s, cpu_used = %s, memory_used = %s, disk_used = %s, space_id = %s where id = %s and space_id = %s and is_historic = %s"
-update_foundry_memory_percent = "UPDATE foundries SET memory_consumption_percent = %s, last_updated = %s where id = %s"
+update_foundry_memory_percent = "UPDATE foundries SET memory_consumption_percent = %s, foundry_memory = %s, last_updated = %s where id = %s"
 app_memory_percent = "UPDATE pcf_apps SET memory_consumption_percent = %s, last_updated = %s"
-update_app_historic = "UPDATE pcf_apps SET is_historic = %s, last_updated = %s"
+update_app_historic = "UPDATE pcf_apps SET is_historic = %s"
+update_foundry_historic = "UPDATE foundries SET is_historic = %s"
 truncate_apps = "TRUNCATE TABLE grafana.pcf_apps"
 truncate_orgs = "TRUNCATE TABLE grafana.pcf_org"
 truncate_space = "TRUNCATE TABLE grafana.pcf_space"
@@ -52,7 +53,8 @@ db = mysql.connector.connect(
 mycursor = db.cursor()
 #mycursor.execute(truncate_apps)
 #db.commit()
-mycursor.execute(update_app_historic, ("H",time.strftime('%Y-%m-%d %H:%M:%S'),))
+mycursor.execute(update_app_historic, ("H",))
+mycursor.execute(update_foundry_historic, ("H",))
 db.commit()
 for foundry in foundry_list:
     foundry_avail_mem = 0
@@ -223,7 +225,7 @@ for foundry in foundry_list:
     print(foundry_avail_mem)
     foundry_used_per = 100 * (foundry_app_mem_usage/foundry_avail_mem)  
     print(foundry_used_per)
-    mycursor.execute(update_foundry_memory_percent, (foundry_used_per,time.strftime('%Y-%m-%d %H:%M:%S'),foundry_id))
+    mycursor.execute(update_foundry_memory_percent, (foundry_used_per, foundry_app_mem_usage, time.strftime('%Y-%m-%d %H:%M:%S'), foundry_id))
     db.commit()
 workbook.close()
 
