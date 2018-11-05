@@ -19,7 +19,7 @@ db = mysql.connector.connect(
   database="grafana"
 )
 
-mycursor = db.cursor()
+#mycursor = db.cursor()
 #mycursor.execute(update_app_historic, ("H",))
 #mycursor.execute(update_foundry_historic, ("H",))
 #db.commit()
@@ -31,5 +31,6 @@ response = conn.getresponse()
 print(response.status, response.reason)
 data = response.read()
 conn.close()
-json_stats = json.loads(data)
-print(json_stats)
+print(data)
+#json_stats = json.loads(data)
+#print(json_stats)
