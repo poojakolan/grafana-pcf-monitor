@@ -7,6 +7,11 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema mydb
 -- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 -- -----------------------------------------------------
 -- Schema grafana
 -- -----------------------------------------------------
@@ -15,7 +20,99 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- Schema grafana
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `grafana` DEFAULT CHARACTER SET latin1 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`tbl_object`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`tbl_object` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  `description` VARCHAR(45) NULL DEFAULT NULL,
+  `type` VARCHAR(45) NULL DEFAULT NULL,
+  `image` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`tbl_properties`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`tbl_properties` (
+  `id` INT(11) NOT NULL,
+  `key` VARCHAR(45) NULL DEFAULT NULL,
+  `display_name` VARCHAR(45) NULL DEFAULT NULL,
+  `type` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`tbl_property_list`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`tbl_property_list` (
+  `id` INT(11) NOT NULL,
+  `object_id` INT(11) NULL DEFAULT NULL,
+  `property` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_tbl_property_list_tbl_object_idx` (`object_id` ASC) ,
+  INDEX `fk_tbl_property_list_tbl_properties1_idx` (`property` ASC) ,
+  CONSTRAINT `fk_tbl_property_list_tbl_object`
+    FOREIGN KEY (`object_id`)
+    REFERENCES `mydb`.`tbl_object` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_tbl_property_list_tbl_properties1`
+    FOREIGN KEY (`property`)
+    REFERENCES `mydb`.`tbl_properties` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`tbl_property_values`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`tbl_property_values` (
+  `id` INT(11) NOT NULL,
+  `param_value` VARCHAR(45) NULL DEFAULT NULL,
+  `property_id` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_tbl_property_values_tbl_properties1_idx` (`property_id` ASC) ,
+  CONSTRAINT `fk_tbl_property_values_tbl_properties1`
+    FOREIGN KEY (`property_id`)
+    REFERENCES `mydb`.`tbl_properties` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
 USE `grafana` ;
+
+-- -----------------------------------------------------
+-- Table `grafana`.`diego_cell_health`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `grafana`.`diego_cell_health` (
+  `id` INT(11) NOT NULL,
+  `name` VARCHAR(45) NULL DEFAULT NULL,
+  `ip` VARCHAR(45) NULL DEFAULT NULL,
+  `job` VARCHAR(45) NULL DEFAULT NULL,
+  `deployment` VARCHAR(45) NULL DEFAULT NULL,
+  `mem_chunks_no` INT(11) NULL DEFAULT NULL,
+  `chunk_size` INT(11) NULL DEFAULT NULL,
+  `total_disk` VARCHAR(45) NULL DEFAULT NULL,
+  `total_memory` INT(11) NULL DEFAULT NULL,
+  `avail_disk_per` DECIMAL(10,0) NULL DEFAULT NULL,
+  `avail_mem_per` DECIMAL(10,0) NULL DEFAULT NULL,
+  `is_historic` VARCHAR(1) NULL DEFAULT NULL,
+  `updated_at` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1;
+
 
 -- -----------------------------------------------------
 -- Table `grafana`.`foundries`
@@ -30,7 +127,21 @@ CREATE TABLE IF NOT EXISTS `grafana`.`foundries` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `id_UNIQUE` (`id` ASC) )
 ENGINE = InnoDB
-AUTO_INCREMENT = 8
+AUTO_INCREMENT = 11
+DEFAULT CHARACTER SET = latin1;
+
+
+-- -----------------------------------------------------
+-- Table `grafana`.`mysql_health`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `grafana`.`mysql_health` (
+  `id` INT(11) NOT NULL,
+  `total_node_no` INT(11) NULL DEFAULT NULL,
+  `healthy_node_no` INT(11) NULL DEFAULT NULL,
+  `is_historic` VARCHAR(1) NULL DEFAULT NULL,
+  `updated_at` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
 DEFAULT CHARACTER SET = latin1;
 
 
@@ -52,7 +163,7 @@ CREATE TABLE IF NOT EXISTS `grafana`.`pcf_org` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 27
+AUTO_INCREMENT = 33
 DEFAULT CHARACTER SET = latin1;
 
 
@@ -74,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `grafana`.`pcf_space` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 32
+AUTO_INCREMENT = 44
 DEFAULT CHARACTER SET = latin1;
 
 
@@ -104,7 +215,7 @@ CREATE TABLE IF NOT EXISTS `grafana`.`pcf_apps` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-AUTO_INCREMENT = 35
+AUTO_INCREMENT = 41
 DEFAULT CHARACTER SET = latin1;
 
 
