@@ -5,13 +5,13 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema grafana
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Schema mydb
+-- Schema grafana
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+CREATE SCHEMA IF NOT EXISTS `grafana` DEFAULT CHARACTER SET utf8 ;
 -- -----------------------------------------------------
 -- Schema grafana
 -- -----------------------------------------------------
@@ -20,12 +20,12 @@ CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
 -- Schema grafana
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `grafana` DEFAULT CHARACTER SET latin1 ;
-USE `mydb` ;
+USE `grafana` ;
 
 -- -----------------------------------------------------
--- Table `mydb`.`tbl_object`
+-- Table `grafana`.`tbl_object`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`tbl_object` (
+CREATE TABLE IF NOT EXISTS `grafana`.`tbl_object` (
   `id` INT(11) NOT NULL,
   `name` VARCHAR(45) NULL DEFAULT NULL,
   `description` VARCHAR(45) NULL DEFAULT NULL,
@@ -37,9 +37,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`tbl_properties`
+-- Table `grafana`.`tbl_properties`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`tbl_properties` (
+CREATE TABLE IF NOT EXISTS `grafana`.`tbl_properties` (
   `id` INT(11) NOT NULL,
   `key` VARCHAR(45) NULL DEFAULT NULL,
   `display_name` VARCHAR(45) NULL DEFAULT NULL,
@@ -50,9 +50,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`tbl_property_list`
+-- Table `grafana`.`tbl_property_list`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`tbl_property_list` (
+CREATE TABLE IF NOT EXISTS `grafana`.`tbl_property_list` (
   `id` INT(11) NOT NULL,
   `object_id` INT(11) NULL DEFAULT NULL,
   `property` INT(11) NULL DEFAULT NULL,
@@ -61,12 +61,12 @@ CREATE TABLE IF NOT EXISTS `mydb`.`tbl_property_list` (
   INDEX `fk_tbl_property_list_tbl_properties1_idx` (`property` ASC) ,
   CONSTRAINT `fk_tbl_property_list_tbl_object`
     FOREIGN KEY (`object_id`)
-    REFERENCES `mydb`.`tbl_object` (`id`)
+    REFERENCES `grafana`.`tbl_object` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_tbl_property_list_tbl_properties1`
     FOREIGN KEY (`property`)
-    REFERENCES `mydb`.`tbl_properties` (`id`)
+    REFERENCES `grafana`.`tbl_properties` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -74,9 +74,9 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `mydb`.`tbl_property_values`
+-- Table `grafana`.`tbl_property_values`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `mydb`.`tbl_property_values` (
+CREATE TABLE IF NOT EXISTS `grafana`.`tbl_property_values` (
   `id` INT(11) NOT NULL,
   `param_value` VARCHAR(45) NULL DEFAULT NULL,
   `property_id` INT(11) NULL DEFAULT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `mydb`.`tbl_property_values` (
   INDEX `fk_tbl_property_values_tbl_properties1_idx` (`property_id` ASC) ,
   CONSTRAINT `fk_tbl_property_values_tbl_properties1`
     FOREIGN KEY (`property_id`)
-    REFERENCES `mydb`.`tbl_properties` (`id`)
+    REFERENCES `grafana`.`tbl_properties` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
