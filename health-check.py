@@ -10,7 +10,7 @@ import bitmath
 import mysql.connector
 
 timestamp_str = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d-%H:%M:%S')
-health_watch_url = "healthwatch.hdc2.cloud.8451.com"
+health_watch_url = "healthwatch.com"
 
 db = mysql.connector.connect(
   host="localhost",
