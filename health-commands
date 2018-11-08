@@ -1,0 +1,2 @@
+curl -G healthwatch.hdc2.cloud.8451.com/v1/free-chunks \
+     -H "Authorization: Bearer MY_TOKEN"
