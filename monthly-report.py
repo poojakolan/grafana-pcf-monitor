@@ -52,6 +52,13 @@ for foundry in foundry_list:
     worksheet.write(row+5, col+2, 'maximum_concurrent_apps_and_tasks')
     row = row + 7
     col = 0
+    firstMonthReport = apps_task_data['monthly_reports'][0] 
+    if(firstMonthReport['month'] > 1):
+        for i in range(1, firstMonthReport['month'] -1):
+            worksheet.write(row, col,     firstMonthReport['year'])
+            worksheet.write(row, col + 1, i)
+            worksheet.write(row, col + 2, 0)
+            row += 1
     for report in apps_task_data['monthly_reports']:
         worksheet.write(row, col,     report['year'])
         worksheet.write(row, col + 1, report['month'])
