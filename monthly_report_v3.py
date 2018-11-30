@@ -89,8 +89,8 @@ for foundry in foundry_list:
         worksheet.write(row, col + 2, apps_task_data['monthly_reports'][j]['average_app_instances'])
         worksheet.write(row, col + 3, max_apps_task_data['monthly_reports'][j]['maximum_concurrent_apps_and_tasks'])
         worksheet.write(row, col + 4, max_apps_task_data['monthly_reports'][j]['maximum_concurrent_apps_and_tasks'])
-        worksheet.write(row, col + 6, apps_task_usage_data['monthly_reports'][j]['task_hours'])
-        worksheet.write(row, col + 5, apps_task_data['monthly_reports'][j]['app_instance_hours'])
+        worksheet.write(row, col + 5, apps_task_usage_data['monthly_reports'][j]['task_hours'])
+        worksheet.write(row, col + 6, apps_task_data['monthly_reports'][j]['app_instance_hours'])
         worksheet.write(row, col + 7, apps_task_data['monthly_reports'][j]['app_instance_hours'])
         worksheet.write(row, col + 8, apps_task_usage_data['monthly_reports'][j]['task_hours'])
         apps_task_usage_data
